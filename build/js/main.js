@@ -2,7 +2,9 @@ class SnakeGame {
   constructor() {
     this.box = document.querySelector('.game-box');
     this.snake = document.querySelector('.snake');
-    this.speed = 1000;
+    this.speed = 300;
+    this.score = 0;
+    this.intervalId;
     this.boxParams = {
       width: this.box.getBoundingClientRect().width,
       height: this.box.getBoundingClientRect().height,
@@ -10,52 +12,59 @@ class SnakeGame {
       left: this.box.getBoundingClientRect().left
     };
     this.direction = 'up';
-    this.start();
+    document.addEventListener('keydown', this.keyListener.bind(this));
   }
   
   start() {
-    let context = this;
-
-    setInterval(context.moveStart, context.speed, context);
-    document.addEventListener('keydown', e => {
-      let keyCode = e.code;
-      if (keyCode = 'ArrowLeft') {
-        this.direction === 'left';
-      } else if (keyCode === 'ArrowRight') {
-        this.direction = 'right';
-      } else if (keyCode === 'ArrowUp') {
-        this.direction = 'up';
-      } else if (keyCode === 'ArrowDown') {
-        this.direction = 'down';
-      }
-    })
+    let interval = setInterval(this.moveStart.bind(this), this.speed);
+    this.intervalId = interval; 
   }
 
-  moveStart(context) {
-    console.log(context.direction);
-    let leftCoord = +window.getComputedStyle(context.snake).left.replace(/[^-0-9]/gim,'');
-    let topCoord = +window.getComputedStyle(context.snake).top.replace(/[^-0-9.]/gim,'');
+  moveStart() {
+    let leftCoord = +window.getComputedStyle(this.snake).left.replace(/[^-0-9]/gim,'');
+    let topCoord = +window.getComputedStyle(this.snake).top.replace(/[^-0-9.]/gim,'');
     let isInsideGameBox =
-      window.getComputedStyle(context.snake).left.replace(/[^-0-9]/gim,'') >= 0 + 20 &&
-      window.getComputedStyle(context.snake).left.replace(/[^-0-9]/gim,'') <= context.boxParams.width - 40 &&
-      window.getComputedStyle(context.snake).top.replace(/[^-0-9.]/gim,'') >= 0 + 20 &&
-      window.getComputedStyle(context.snake).top.replace(/[^-0-9.]/gim,'') <= context.boxParams.height - 40
+      window.getComputedStyle(this.snake).left.replace(/[^-0-9]/gim,'') >= 0 &&
+      window.getComputedStyle(this.snake).left.replace(/[^-0-9]/gim,'') <= this.boxParams.width - 20 &&
+      window.getComputedStyle(this.snake).top.replace(/[^-0-9.]/gim,'') >= 0 &&
+      window.getComputedStyle(this.snake).top.replace(/[^-0-9.]/gim,'') <= this.boxParams.height - 20
     ;
-
+    this.score += 1;
     if (isInsideGameBox) {
-      if (context.direction === 'right') {
+      if (this.direction === 'right') {
         leftCoord += 20;
-      } else if (context.direction === 'left') {
+      } else if (this.direction === 'left') {
         leftCoord -= 20;
-      } else if (context.direction === 'up') {
+      } else if (this.direction === 'up') {
         topCoord -= 20;
-      } else if (context.direction === 'down') {
+      } else if (this.direction === 'down') {
         topCoord += 20;
       }
-      context.snake.style.left = leftCoord + 'px';
-      context.snake.style.top = topCoord + 'px';
+      this.snake.style.left = leftCoord + 'px';
+      this.snake.style.top = topCoord + 'px';
     } else {
-      // alert('Game Over');
+      clearInterval(this.intervalId);
+      alert(`
+        Game Over!
+        Score:${this.score};
+        REFRESH THE PAGE TO RESTART!
+      `);
+    }
+  }
+
+  keyListener(e) {
+    let keyCode = e.code;
+
+    if (keyCode === 'ArrowLeft') {
+      this.direction = 'left';
+    } else if (keyCode === 'ArrowRight') {
+      this.direction = 'right';
+    } else if (keyCode === 'ArrowUp') {
+      this.direction = 'up';
+    } else if (keyCode === 'ArrowDown') {
+      this.direction = 'down';
+    } else if (keyCode === 'Enter') {
+      this.start();
     }
   }
 };
