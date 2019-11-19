@@ -106,24 +106,29 @@ class SnakeGame {
 
   addVictim() {
     let victim = document.createElement(`div`);
-    let randomNum = [...String(Math.random())][2] ** 2;
-    let rightLimit = window.getComputedStyle(this.box).width / 20;
-    let bottomLimit = window.getComputedStyle(this.box).height / 20;
+    let randomNum = this.getRandomCoords();
 
     victim.className = 'new-victim';
     this.box.append(victim);
-    if (randomNum >= rightLimit && randomNum <= bottomLimit && randomNum >= 0) {
-      randomNum = [...String(Math.random())][2] ** 2;
-    }
-    document.querySelector('.new-victim').setAttribute('style', `
-      left:${randomNum * 20}px;
-      top:${randomNum * 20}px;
-    `);
+    document.querySelector('.new-victim').setAttribute('style', randomNum);
   }
 
   deleteVictims() {
     [...document.querySelectorAll('.new-victim')].forEach((el) => el.parentElement.removeChild(el));
     this.addVictim();
+  }
+  getRandomCoords() {
+    let randomNumTop = [...String(Math.random())][2] * [...String(Math.random())][2];
+    let randomNumLeft = [...String(Math.random())][2] * [...String(Math.random())][2];
+    let rightLimit = window.getComputedStyle(this.box).width;
+    let bottomLimit = window.getComputedStyle(this.box).height;
+    console.log(bottomLimit);
+
+    if ((randomNumLeft * 20 >= rightLimit) && (randomNumTop  * 20 >= bottomLimit)) {
+      this.getRandomCoords();
+    } else {
+      return `left:${randomNumLeft * 20}px; top:${randomNumTop  * 20}px`;
+    }
   }
 };
 
