@@ -39,6 +39,8 @@ class SnakeGame {
         top: window.getComputedStyle(el).top.replace(/[^-0-9.]/gim,'')
       }
     });
+    let rotateVal;
+
     this.snakePartsPrevPos = snakeParts;
     if ([...document.querySelectorAll('.snake')].length > 1) {
       for(let i =0; i<= [...document.querySelectorAll('.snake')].length - 1; i++) {
@@ -54,15 +56,20 @@ class SnakeGame {
     if (isInsideGameBox) {
       if (this.direction === 'right') {
         leftCoord += 20;
+        rotateVal = 'rotate(90deg)';
       } else if (this.direction === 'left') {
         leftCoord -= 20;
+        rotateVal = 'rotate(-90deg)';
       } else if (this.direction === 'up') {
         topCoord -= 20;
+        rotateVal = 'rotate(0deg)';
       } else if (this.direction === 'down') {
         topCoord += 20;
+        rotateVal = 'rotate(180deg)';
       }
       this.snake.style.left = leftCoord + 'px';
       this.snake.style.top = topCoord + 'px';
+      document.querySelector('.snake__head').style.transform = rotateVal;
     } else {
       clearInterval(this.intervalId);
       alert(`
@@ -106,7 +113,7 @@ class SnakeGame {
 
   addVictim() {
     let victim = document.createElement(`div`);
-    let randomNum = this.getRandomCoords();
+    let randomNum = `left:${this.getRandomCoords(0,84)}px;top:${this.getRandomCoords(0,39)}px;`;
 
     victim.className = 'new-victim';
     this.box.append(victim);
@@ -117,19 +124,12 @@ class SnakeGame {
     [...document.querySelectorAll('.new-victim')].forEach((el) => el.parentElement.removeChild(el));
     this.addVictim();
   }
-  getRandomCoords() {
-    let randomNumTop = [...String(Math.random())][2] * [...String(Math.random())][2];
-    let randomNumLeft = [...String(Math.random())][2] * [...String(Math.random())][2];
-    let rightLimit = window.getComputedStyle(this.box).width;
-    let bottomLimit = window.getComputedStyle(this.box).height;
-    console.log(bottomLimit);
 
-    if ((randomNumLeft * 20 >= rightLimit) && (randomNumTop  * 20 >= bottomLimit)) {
-      this.getRandomCoords();
-    } else {
-      return `left:${randomNumLeft * 20}px; top:${randomNumTop  * 20}px`;
-    }
+  getRandomCoords(min, max) {
+    let rndNum =Math.floor(min + Math.random() * (max + 1 - min));
+    return rndNum * 20;
   }
+
 };
 
 new SnakeGame();

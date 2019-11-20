@@ -25,6 +25,31 @@ body {
     top: 500px;
     transition: all .1s linear;
     z-index: 10;
+    box-sizing:border-box;
+    border:1px solid yellow;
+    // }
+
+    &__head {
+        z-index: 20;
+
+        &>div {
+            position:absolute;
+        }
+    }
+
+    &__eyes {
+        font-size: 25px;
+        color:red;
+        transform: rotate(271deg) translateX(0px) translateY(2px);
+    }
+
+    &__tong {
+        font-size: 11px;
+        color:red;
+        transform:translateX(7px) translateY(-10px);
+        font-weight: 900;
+    }
+
 }
 
 .new-victim {
