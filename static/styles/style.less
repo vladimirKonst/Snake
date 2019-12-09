@@ -23,11 +23,10 @@ body {
     position: absolute;
     left: 600px;
     top: 500px;
-    transition: all .1s linear;
+    transition: all .09s linear;
     z-index: 10;
     box-sizing:border-box;
     border:1px solid yellow;
-    // }
 
     &__head {
         z-index: 20;
@@ -41,6 +40,7 @@ body {
         font-size: 25px;
         color:red;
         transform: rotate(271deg) translateX(0px) translateY(2px);
+        text-shadow: 0px 0px 5px black, 0px 0px 5px black, 0px 0px 10px black;
     }
 
     &__tong {
@@ -48,6 +48,21 @@ body {
         color:red;
         transform:translateX(7px) translateY(-10px);
         font-weight: 900;
+    }
+
+    &:nth-child(2){
+        left:600px;
+        top:520px;
+    }
+
+    &:nth-child(3){
+        left:600px;
+        top:540px;
+    }
+
+    &:nth-child(4){
+        left:600px;
+        top:560px;
     }
 
 }

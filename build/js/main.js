@@ -13,6 +13,7 @@ class SnakeGame {
       left: this.box.getBoundingClientRect().left
     };
     this.direction = 'up';
+    this.selfKilled = false;
     document.addEventListener('keydown', this.keyListener.bind(this));
     alert('PRESS ENTER TO START');
   }
@@ -27,6 +28,7 @@ class SnakeGame {
   moveStart() {
     let leftCoord = +window.getComputedStyle(this.snake).left.replace(/[^-0-9]/gim,'');
     let topCoord = +window.getComputedStyle(this.snake).top.replace(/[^-0-9.]/gim,'');
+    this.touchItself(leftCoord, topCoord);
     let isInsideGameBox =
       window.getComputedStyle(this.snake).left.replace(/[^-0-9]/gim,'') >= 0 &&
       window.getComputedStyle(this.snake).left.replace(/[^-0-9]/gim,'') <= this.boxParams.width - 20 &&
@@ -41,19 +43,11 @@ class SnakeGame {
     });
     let rotateVal;
 
-    this.snakePartsPrevPos = snakeParts;
-    if ([...document.querySelectorAll('.snake')].length > 1) {
-      for(let i =0; i<= [...document.querySelectorAll('.snake')].length - 1; i++) {
-        if (i !== 0) {
-          [...document.querySelectorAll('.snake')][i].setAttribute('style',`
-            left:${this.snakePartsPrevPos[i-1].left}px;
-            top:${this.snakePartsPrevPos[i-1].top}px;
-          `);
-        }
-      }
+    if (this.selfKilled) {
+    	this.gameOver();
     }
-    this.score += 1;
-    if (isInsideGameBox) {
+
+    if (isInsideGameBox ) {
       if (this.direction === 'right') {
         leftCoord += 20;
         rotateVal = 'rotate(90deg)';
@@ -70,14 +64,22 @@ class SnakeGame {
       this.snake.style.left = leftCoord + 'px';
       this.snake.style.top = topCoord + 'px';
       document.querySelector('.snake__head').style.transform = rotateVal;
-    } else {
-      clearInterval(this.intervalId);
-      alert(`
-        Game Over!
-        Score:${this.score};
-        REFRESH THE PAGE TO RESTART!
-      `);
+      // debugger;
     }
+
+    this.snakePartsPrevPos = snakeParts;
+    if ([...document.querySelectorAll('.snake')].length > 1) {
+      for(let i =0; i<= [...document.querySelectorAll('.snake')].length - 1; i++) {
+        if (i !== 0) {
+          [...document.querySelectorAll('.snake')][i].setAttribute('style',`
+            left:${this.snakePartsPrevPos[i-1].left}px;
+            top:${this.snakePartsPrevPos[i-1].top}px;
+          `);
+        }
+      }
+    }
+    this.score += 1;
+
     let foodPlace = {
       left: +window.getComputedStyle(document.querySelector('.new-victim')).left.replace(/[^-0-9]/gim,''),
       top: +window.getComputedStyle(document.querySelector('.new-victim')).top.replace(/[^-0-9.]/gim,'')
@@ -95,16 +97,25 @@ class SnakeGame {
     }
   }
 
+  gameOver() {
+  	clearInterval(this.intervalId);
+      alert(`
+        Game Over!
+        Score:${this.score};
+        REFRESH THE PAGE TO RESTART!
+      `);
+  }
+
   keyListener(e) {
     let keyCode = e.code;
 
-    if (keyCode === 'ArrowLeft') {
+    if (keyCode === 'ArrowLeft' && this.direction !== 'right') {
       this.direction = 'left';
-    } else if (keyCode === 'ArrowRight') {
+    } else if (keyCode === 'ArrowRight' && this.direction !== 'left') {
       this.direction = 'right';
-    } else if (keyCode === 'ArrowUp') {
+    } else if (keyCode === 'ArrowUp' && this.direction !== 'down') {
       this.direction = 'up';
-    } else if (keyCode === 'ArrowDown') {
+    } else if (keyCode === 'ArrowDown' && this.direction !== 'up') {
       this.direction = 'down';
     } else if (keyCode === 'Enter') {
       this.start();
@@ -128,6 +139,21 @@ class SnakeGame {
   getRandomCoords(min, max) {
     let rndNum =Math.floor(min + Math.random() * (max + 1 - min));
     return rndNum * 20;
+  }
+
+  touchItself(leftCoord, topCoord) {
+    let snake = [...document.querySelectorAll('.snake')];
+    let i;
+
+    for(i = 1; i <= snake.length - 1; i++) {
+      let iteratedPart = snake[i];
+      let CurrentPartLeftCoord = +window.getComputedStyle(iteratedPart).left.replace(/[^-0-9]/gim,'');
+      let CurrentPartTopCoord = +window.getComputedStyle(iteratedPart).top.replace(/[^-0-9.]/gim,'');
+      if (leftCoord === CurrentPartLeftCoord && topCoord === CurrentPartTopCoord) {
+        this.selfKilled = true;
+        console.log('this.selfKilled');
+      }
+    }
   }
 
 };
